@@ -1,0 +1,26 @@
+steps:
+  # Docker build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build'
+      , '-t'
+      , 'us-central1-docker.pkg.dev/gcp-demo-403010/gcp-demo/my-python-app:${SHORT_SHA}'
+      , '-t'
+      , 'us-central1-docker.pkg.dev/gcp-demo-403010/gcp-demo/my-python-app:latest'
+      , '--cache-from'
+      , 'us-central1-docker.pkg.dev/gcp-demo-403010/gcp-demo/my-python-app:latest'
+      , '.'
+    ]
+  
+  # Docker push to Google Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push'
+      , 'us-central1-docker.pkg.dev/gcp-demo-403010/gcp-demo/my-python-app:${SHORT_SHA}' 
+    ]
+  - timeout: "600s"
+
+# Store images in Google Artifact Registry
+images:
+  - 'us-central1-docker.pkg.dev/gcp-demo-403010/gcp-demo/my-python-app:${SHORT_SHA}'
+  - 'us-central1-docker.pkg.dev/gcp-demo-403010/gcp-demo/my-python-app:latest'
